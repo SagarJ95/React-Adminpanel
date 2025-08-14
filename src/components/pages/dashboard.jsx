@@ -400,8 +400,8 @@ function Dashboard() {
               </div>
               {/*begin::Wrapper*/}
               {/*begin::Illustration*/}
-              <img className="mx-auto h-150px h-lg-200px theme-light-show" src="assets/media/illustrations/misc/upgrade.svg" alt />
-              <img className="mx-auto h-150px h-lg-200px theme-dark-show" src="assets/media/illustrations/misc/upgrade-dark.svg" alt />
+              <img className="mx-auto h-150px h-lg-200px theme-light-show" src="assets/media/illustrations/misc/upgrade.svg" alt="" />
+              <img className="mx-auto h-150px h-lg-200px theme-dark-show" src="assets/media/illustrations/misc/upgrade-dark.svg" alt="" />
               {/*end::Illustration*/}
             </div>
             {/*end::Body*/}
@@ -891,7 +891,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-3.jpg" className alt />
+                                <img src="assets/media/avatars/300-3.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Guy Hawkins</a>
@@ -915,7 +915,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-2.jpg" className alt />
+                                <img src="assets/media/avatars/300-2.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Jane Cooper</a>
@@ -939,7 +939,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-9.jpg" className alt />
+                                <img src="assets/media/avatars/300-9.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Jacob Jones</a>
@@ -963,7 +963,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-7.jpg" className alt />
+                                <img src="assets/media/avatars/300-7.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Cody Fishers</a>
@@ -1013,7 +1013,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-25.jpg" className alt />
+                                <img src="assets/media/avatars/300-25.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Brooklyn Simmons</a>
@@ -1037,7 +1037,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-24.jpg" className alt />
+                                <img src="assets/media/avatars/300-24.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Esther Howard</a>
@@ -1061,7 +1061,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-20.jpg" className alt />
+                                <img src="assets/media/avatars/300-20.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Annette Black</a>
@@ -1085,7 +1085,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-17.jpg" className alt />
+                                <img src="assets/media/avatars/300-17.jpg" className="" alt=""/>
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Marvin McKinney</a>
@@ -1135,7 +1135,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-11.jpg" className alt />
+                                <img src="assets/media/avatars/300-11.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Jacob Jones</a>
@@ -1159,7 +1159,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-23.jpg" className alt />
+                                <img src="assets/media/avatars/300-23.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Ronald Richards</a>
@@ -1183,7 +1183,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-4.jpg" className alt />
+                                <img src="assets/media/avatars/300-4.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Leslie Alexander</a>
@@ -1207,7 +1207,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-1.jpg" className alt />
+                                <img src="assets/media/avatars/300-1.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Courtney Henry</a>
@@ -1257,7 +1257,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-12.jpg" className alt />
+                                <img src="assets/media/avatars/300-12.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Arlene McCoy</a>
@@ -1281,7 +1281,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-21.jpg" className alt />
+                                <img src="assets/media/avatars/300-21.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Marvin McKinneyr</a>
@@ -1305,7 +1305,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-30.jpg" className alt />
+                                <img src="assets/media/avatars/300-30.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Jacob Jones</a>
@@ -1329,7 +1329,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-14.jpg" className alt />
+                                <img src="assets/media/avatars/300-14.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Esther Howard</a>
@@ -1379,7 +1379,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-6.jpg" className alt />
+                                <img src="assets/media/avatars/300-6.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Jane Cooper</a>
@@ -1403,7 +1403,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-10.jpg" className alt />
+                                <img src="assets/media/avatars/300-10.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Esther Howard</a>
@@ -1427,7 +1427,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-9.jpg" className alt />
+                                <img src="assets/media/avatars/300-9.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Jacob Jones</a>
@@ -1451,7 +1451,7 @@ function Dashboard() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="symbol symbol-50px me-3">
-                                <img src="assets/media/avatars/300-3.jpg" className alt />
+                                <img src="assets/media/avatars/300-3.jpg" className="" alt="" />
                               </div>
                               <div className="d-flex justify-content-start flex-column">
                                 <a href="pages/user-profile/overview.html" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Ralph Edwards</a>
@@ -1530,7 +1530,7 @@ function Dashboard() {
                         <div className="d-flex align-items-center me-5 me-xl-13">
                           {/*begin::Symbol*/}
                           <div className="symbol symbol-30px symbol-circle me-3">
-                            <img src="assets/media/avatars/300-3.jpg" className alt />
+                            <img src="assets/media/avatars/300-3.jpg" className="" alt="" />
                           </div>
                           {/*end::Symbol*/}
                           {/*begin::Info*/}
@@ -2192,7 +2192,7 @@ function Dashboard() {
                       <td>
                         <div className="d-flex align-items-center">
                           <div className="symbol symbol-50px me-3">
-                            <img src="assets/media/stock/600x600/img-49.jpg" className alt />
+                            <img src="assets/media/stock/600x600/img-49.jpg" className="" alt="" />
                           </div>
                           <div className="d-flex justify-content-start flex-column">
                             <a href="#" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Mivy App</a>
@@ -2228,7 +2228,7 @@ function Dashboard() {
                       <td>
                         <div className="d-flex align-items-center">
                           <div className="symbol symbol-50px me-3">
-                            <img src="assets/media/stock/600x600/img-40.jpg" className alt />
+                            <img src="assets/media/stock/600x600/img-40.jpg" className="" alt="" />
                           </div>
                           <div className="d-flex justify-content-start flex-column">
                             <a href="#" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Avionica</a>
@@ -2264,7 +2264,7 @@ function Dashboard() {
                       <td>
                         <div className="d-flex align-items-center">
                           <div className="symbol symbol-50px me-3">
-                            <img src="assets/media/stock/600x600/img-39.jpg" className alt />
+                            <img src="assets/media/stock/600x600/img-39.jpg" className="" alt="" />
                           </div>
                           <div className="d-flex justify-content-start flex-column">
                             <a href="#" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Charto CRM</a>
@@ -2300,7 +2300,7 @@ function Dashboard() {
                       <td>
                         <div className="d-flex align-items-center">
                           <div className="symbol symbol-50px me-3">
-                            <img src="assets/media/stock/600x600/img-47.jpg" className alt />
+                            <img src="assets/media/stock/600x600/img-47.jpg" className="" alt="" />
                           </div>
                           <div className="d-flex justify-content-start flex-column">
                             <a href="#" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Tower Hill</a>
@@ -2336,7 +2336,7 @@ function Dashboard() {
                       <td>
                         <div className="d-flex align-items-center">
                           <div className="symbol symbol-50px me-3">
-                            <img src="assets/media/stock/600x600/img-48.jpg" className alt />
+                            <img src="assets/media/stock/600x600/img-48.jpg" className="" alt="" />
                           </div>
                           <div className="d-flex justify-content-start flex-column">
                             <a href="#" className="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">9 Degree</a>
