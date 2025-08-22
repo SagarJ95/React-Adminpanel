@@ -1,6 +1,59 @@
-import React from "react";
-import { NavLink } from "react-router";
+import axios from "axios";
+import React ,{useState}from "react";
+import { NavLink, } from "react-router";
+import { toast } from "react-toastify";
 function Add_product() {
+
+    const [formData,setfromData] = useState({
+        product_name:"",
+        category:"",
+        country:"",
+        product_thumbnail:"",
+        product_upload_image:"",
+        minimum_order_quantity:"",
+        maximum_order_quantity:"",
+        product_price:"",
+        product_desc:""
+    })
+
+    const handleAddProduct = (e) => {
+        setfromData({...formData,[e.target.name]:e.target.value})
+    }
+
+    const submitForm = async (e) => {
+        e.preventDefault();
+
+        const body = {
+            name:formData.product_name,
+            description:formData.product_desc,
+            category:formData.category,
+            countryId:formData.country,
+            product_images:formData.product_upload_image,
+            thumbnail_product_image:formData.product_thumbnail,
+            minimum_order_place:formData.minimum_order_place,
+            maximum_order_place:formData.maximum_order_place,
+            price:formData.price
+        }
+
+
+        const storeProduct = await axios.post("https://keepinbasket.ortdemo.com/api/createProduct",body,{
+            headers:{
+                Accept:"application/json",
+                Authorization:`Bearer ${token}`
+            }
+        })
+
+        if(storeProduct.data.status == true){
+            toast.success(storeProduct.data.message)
+            setTimeout(()=>{
+                location.href('/product_master')
+            },1000)
+        }else{
+            toast.error(storeProduct.data.message)
+        }
+    }
+
+
     return(
         <>
             <div id="kt_app_toolbar" className="app-toolbar py-3 py-lg-6">
@@ -29,49 +82,49 @@ function Add_product() {
                 <div className="row">
                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Product Name</label>
-                        <input type="text" className="form-control" name="product_name" id="product_name" />
+                        <input type="text" className="form-control" name="product_name" id="product_name" onChange={(e)=>handleAddProduct(e)} />
                     </div>
                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Product Category</label>
-                        <select className="form-control" >
+                        <select className="form-control" name="category" onChange={(e)=>handleAddProduct(e)}>
                             <option value="">Choose Category</option>
                             </select>
                     </div>
                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Product Country</label>
-                         <select className="form-control" >
+                         <select className="form-control" name="country" onChange={(e)=>handleAddProduct(e)}>
                             <option value="">Choose Country</option>
                             </select>
                     </div>
                     <div className="col-md-6 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Product Thumbnail</label>
-                       <input type="file" className="form-control" name="product_name" id="product_name" />
+                       <input type="file" className="form-control" name="product_thumbnail" id="product_thumbnail" onChange={(e)=>handleAddProduct(e)}/>
                     </div>
                     <div className="col-md-6 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Upload Product Images</label>
-                        <input type="file" className="form-control" name="product_name" id="product_name" />
+                        <input type="file" className="form-control" name="product_upload_image" id="product_upload_image" onChange={(e)=>handleAddProduct(e)}/>
                     </div>
                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Minimum Order Quantity:</label>
-                        <input type="text" className="form-control" name="minimum_order_quantity" id="minimum_order_quantity" />
+                        <input type="text" className="form-control" name="minimum_order_quantity" id="minimum_order_quantity" onChange={(e)=>handleAddProduct(e)}/>
                     </div>
                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Maximum Order Quantity:</label>
-                        <input type="text" className="form-control" name="maximum_order_quantity" id="maximum_order_quantity" />
+                        <input type="text" className="form-control" name="maximum_order_quantity" id="maximum_order_quantity" onChange={(e)=>handleAddProduct(e)}/>
                     </div>
                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Product Price:</label>
-                        <input type="text" className="form-control" name="product_price" id="product_price" />
+                        <input type="text" className="form-control" name="product_price" id="product_price" onChange={(e)=>handleAddProduct(e)}/>
                     </div>
                      <div className="col-md-12 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Product Description:</label>
-                        <textarea className="form-control" name="product_desc" id="product_desc" />
+                        <textarea className="form-control" name="product_desc" id="product_desc" onChange={(e)=>handleAddProduct(e)}/>
                     </div>
 
                 </div>
                 <div className="col-md-12 text-end">
                     <NavLink to='/product_master' className="btn btn-sm btn-primary" style={{marginRight:"10px"}}>Back</NavLink>
-                    <button type="button" className="btn btn-sm btn-primary" id="filter">Submit</button>
+                    <button type="button" className="btn btn-sm btn-primary" id="filter" onClick={(e)=>submitForm(e)}>Submit</button>
                 </div>
                 </div>
             </div>

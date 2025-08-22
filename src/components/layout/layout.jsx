@@ -4,6 +4,7 @@ import Headers from "./header";
 import Footer from "./footer";
 import Siderbar from "./sidebar";
 import { Outlet } from "react-router";
+import { ToastContainer, toast } from 'react-toastify';
 
 const Layout = () => {
   useEffect(() => {
@@ -20,6 +21,19 @@ const Layout = () => {
 
   return (
     <>
+    <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
+
     <div className="d-flex flex-column flex-root app-root" id="kt_app_root">
       <div className="app-page flex-column flex-column-fluid" id="kt_app_page">
         <Headers />

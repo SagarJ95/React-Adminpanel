@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import { useDispatch, useSelector } from 'react-redux'
 import { categorylist } from '../../../Producer/category'
 import DataTable from 'react-data-table-component'
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
 
 function Categories_master() {
     const { list, category_status } = useSelector((state) => state.category_list)
@@ -42,8 +44,45 @@ function Categories_master() {
         }
     ]
 
+    const [fromData,setfromData] = useState({
+        name:"",
+        description:""
+    })
+
+    const handleOnchange = (e) => {
+        setfromData({...fromData,[e.target.name]:e.target.value})
+    }
+
+
+    const addCategorysubmit = async (e) => {
+        e.preventDefault();
+
+        const token = localStorage.getItem('admin_access_token');
+
+        const body = {
+            category_name : fromData.name,
+            description: fromData.description
+        }
+
+        const storeCategory = await axios.post("https://keepinbasket.ortdemo.com/api/createCategory",body,{
+            headers:{
+                Accept:"application/json",
+                Authorization:`Bearer ${token}`
+            }
+        })
+
+
+        if(storeCategory.data.status == true){
+             $("#kt_modal_add_customer").modal("hide");
+            toast.success(`✅ ${storeCategory.data.message}`);
+        }else{
+            toast.error(`✅ ${storeCategory.data.message}!`)
+        }
+    }
+
     return (
         <>
+
             <div id="kt_app_toolbar" className="app-toolbar py-3 py-lg-6">
                 <div id="kt_app_toolbar_container" className="app-container container-fluid d-flex flex-stack">
                     <div className="page-title d-flex flex-column justify-content-center flex-wrap me-3">
@@ -121,20 +160,20 @@ function Categories_master() {
                             <div className="modal-body py-10 px-lg-17">
                                 <div className="fv-row mb-7 fv-plugins-icon-container">
                                     <label className="required fs-6 fw-semibold mb-2">Name</label>
-                                    <input type="text" className="form-control form-control-solid" placeholder name="name" defaultValue="Sean Bean" />
+                                    <input type="text" className="form-control form-control-solid" placeholder="" name="name"  onChange={(e)=>handleOnchange(e)}/>
 
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" /></div>
 
                                 <div className="fv-row ">
                                     <label className="fs-6 fw-semibold mb-2">Description</label>
-                                    <textarea className="form-control form-control-solid" placeholder name="description" />
+                                    <textarea className="form-control form-control-solid" placeholder="" name="description" onChange={(e)=>handleOnchange(e)}/>
                                 </div>
                             </div>
                             <div className="modal-footer flex-center">
                                 <button type="reset" id="kt_modal_add_customer_cancel" className="btn btn-light me-3" data-bs-dismiss="modal">
                                     Discard
                                 </button>
-                                <button type="submit" id="kt_modal_add_customer_submit" className="btn btn-primary">
+                                <button type="submit" id="kt_modal_add_customer_submit" className="btn btn-primary" onClick={(e)=>addCategorysubmit(e)}>
                                     <span className="indicator-label">
                                         Submit
                                     </span>
