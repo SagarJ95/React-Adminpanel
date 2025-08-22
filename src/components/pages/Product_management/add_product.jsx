@@ -4,7 +4,7 @@ import { NavLink, } from "react-router";
 import { toast } from "react-toastify";
 function Add_product() {
 
-    const [formData,setfromData] = useState({
+    const [formData,setFormData] = useState({
         product_name:"",
         category:"",
         country:"",
@@ -16,43 +16,84 @@ function Add_product() {
         product_desc:""
     })
 
+
     const handleAddProduct = (e) => {
-        setfromData({...formData,[e.target.name]:e.target.value})
-    }
+        const { name, type, files, value } = e.target;
+
+        if (type === "file") {
+            if (name === "product_upload_image") {
+                // multiple images
+                setFormData({
+                    ...formData,
+                    product_upload_image: files,
+                });
+            } else {
+                // single file (thumbnail)
+                setFormData({
+                    ...formData,
+                    [name]: files[0],
+                });
+            }
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
+    };
+
 
     const submitForm = async (e) => {
         e.preventDefault();
 
-        const body = {
-            name:formData.product_name,
-            description:formData.product_desc,
-            category:formData.category,
-            countryId:formData.country,
-            product_images:formData.product_upload_image,
-            thumbnail_product_image:formData.product_thumbnail,
-            minimum_order_place:formData.minimum_order_place,
-            maximum_order_place:formData.maximum_order_place,
-            price:formData.price
+        const body = new FormData();
+        body.append("name", formData.product_name);
+        body.append("description", formData.product_desc);
+        body.append("category", formData.category);
+        body.append("countryId", formData.country);
+
+        if (formData.product_thumbnail) {
+            body.append("thumbnail_product_image", formData.product_thumbnail);
         }
 
-
-        const storeProduct = await axios.post("https://keepinbasket.ortdemo.com/api/createProduct",body,{
-            headers:{
-                Accept:"application/json",
-                Authorization:`Bearer ${token}`
+        if (formData.product_upload_image && formData.product_upload_image.length > 0) {
+            for (let i = 0; i < formData.product_upload_image.length; i++) {
+                body.append("product_images[]", formData.product_upload_image[i]);
             }
-        })
-
-        if(storeProduct.data.status == true){
-            toast.success(storeProduct.data.message)
-            setTimeout(()=>{
-                location.href('/product_master')
-            },1000)
-        }else{
-            toast.error(storeProduct.data.message)
         }
-    }
 
+        body.append("minimum_order_place", formData.minimum_order_quantity);
+        body.append("maximum_order_place", formData.maximum_order_quantity);
+        body.append("price", formData.product_price);
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const storeProduct = await axios.post(
+                "https://keepinbasket.ortdemo.com/api/createProduct",
+                body,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Accept: "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (storeProduct.data.status === true) {
+                toast.success(storeProduct.data.message);
+                setTimeout(() => {
+                    window.location.href = "/product_master";
+                }, 1000);
+            } else {
+                toast.error(storeProduct.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong while uploading product");
+        }
+    };
 
     return(
         <>
