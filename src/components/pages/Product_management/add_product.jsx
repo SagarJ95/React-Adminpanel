@@ -1,8 +1,36 @@
 import axios from "axios";
-import React ,{useState}from "react";
+import React ,{useState,useEffect}from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, } from "react-router";
 import { toast } from "react-toastify";
+import { getcountrylist } from '../../../Producer/country_master'
+import { categorylist } from '../../../Producer/category'
+
 function Add_product() {
+    const { list: countryList, country_status } = useSelector(
+    (state) => state.country_master_list
+    );
+
+    const { list: categoryList, category_status } = useSelector(
+    (state) => state.category_list
+    );
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        if (country_status == 'idle') {
+            dispatch(getcountrylist())
+        }
+    }, [dispatch, country_status])
+
+    useEffect(() => {
+    if (category_status == 'idle') {
+        dispatch(categorylist())
+    }
+}, [dispatch, category_status])
+
+    const getcountryInfo = countryList?.data || []
+    const catgoryList = categoryList?.data || [];
 
     const [formData,setFormData] = useState({
         product_name:"",
@@ -15,7 +43,6 @@ function Add_product() {
         product_price:"",
         product_desc:""
     })
-
 
     const handleAddProduct = (e) => {
         const { name, type, files, value } = e.target;
@@ -41,7 +68,6 @@ function Add_product() {
             });
         }
     };
-
 
     const submitForm = async (e) => {
         e.preventDefault();
@@ -129,12 +155,18 @@ function Add_product() {
                         <label className="fw-semibold mb-2">Product Category</label>
                         <select className="form-control" name="category" onChange={(e)=>handleAddProduct(e)}>
                             <option value="">Choose Category</option>
+                            {catgoryList.map((row)=>(
+                                    <option value={row.id}>{row.category_name}</option>
+                                ))}
                             </select>
                     </div>
                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                         <label className="fw-semibold mb-2">Product Country</label>
-                         <select className="form-control" name="country" onChange={(e)=>handleAddProduct(e)}>
+                         <select className="form-control select2" name="country" onChange={(e)=>handleAddProduct(e)}>
                             <option value="">Choose Country</option>
+                                {getcountryInfo.map((row)=>(
+                                    <option value={row.id}>{row.country_name}</option>
+                                ))}
                             </select>
                     </div>
                     <div className="col-md-6 mb-3 fv-row fv-plugins-icon-container">

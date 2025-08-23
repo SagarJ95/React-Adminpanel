@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { changePriceList } from '../../../Producer/change_price'
@@ -15,6 +15,48 @@ function Change_price() {
         }
     }, [dispatch, changeprice_status])
 
+    const [prices,setPrice]= useState({})
+    const handlePrice = (e,row) => {
+        setPrice({...prices,[row.id]: e.target.value})
+    }
+
+    const submitPrice = async (row) => {
+       const current_price = prices[row.id] ?? row.current_price;
+       console.log("id>>",row.id)
+       console.log("price>>",current_price)
+
+       const body = new FormData();
+               body.append("product_id", row.id);
+               body.append("price", current_price);
+
+               try {
+                   const token = localStorage.getItem("admin_access_token");
+
+                   const ChangePrice = await axios.post(
+                       "https://keepinbasket.ortdemo.com/api/changeProductPrice",
+                       body,
+                       {
+                           headers: {
+                               Accept: "application/json",
+                               Authorization: `Bearer ${token}`,
+                           },
+                       }
+                   );
+
+                   if (ChangePrice.data.status === true) {
+                       toast.success(ChangePrice.data.message);
+                       // setTimeout(() => {
+                       //     window.location.href = "/product_master";
+                       // }, 1000);
+                   } else {
+                       toast.error(ChangePrice.data.message);
+                   }
+               } catch (error) {
+                   console.error(error);
+                   toast.error("Something went wrong");
+               }
+    }
+
     const getchangepricelist = list?.data || [];
 
     const columns = [
@@ -26,7 +68,7 @@ function Change_price() {
         {
             name: "Current Price", cell: row => (
                 <>
-                    <input type="text" className="form-control" value={row.current_price} />
+                    <input type="text" className="form-control" name="current_price" value={prices[row.id] ?? row.current_price} onChange={(e)=>handlePrice(e,row)} />
                 </>
             )
         },
@@ -34,7 +76,7 @@ function Change_price() {
             name: "Action",
             cell: row => (
                 <>
-                    <button title="Update" className="btn btn-sm btn-outline-secondary">
+                    <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={() => submitPrice(row)}>
                         <i className="fa-solid fa-arrows-rotate"></i>
                     </button>
                 </>

@@ -1,11 +1,76 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import { getcountrylist } from '../../../Producer/country_master'
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import DataTable from "react-data-table-component";
 
 function Country_master() {
     const { list, country_status } = useSelector((state) => state.country_master_list)
+    const [formData,setFormData] = useState({
+        country_name:"",
+        country_code:"",
+        country_flag:""
+    })
+
+    const handleKeyChange = (e) => {
+
+        const { name, type, files, value } = e.target;
+         if (type === "file") {
+            if (name === "country_flag") {
+
+                setFormData({
+                    ...formData,
+                    [name]: files[0],
+                });
+            }
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
+    }
+
+    const submitCountry = async (e)=>{
+         e.preventDefault();
+
+        const body = new FormData();
+        body.append("country_name", formData.country_name);
+        body.append("country_code", formData.country_code);
+
+        if (formData.country_flag) {
+            body.append("country_flag", formData.country_flag);
+        }
+
+        try {
+            const token = localStorage.getItem("admin_access_token");
+
+            const storeCountry = await axios.post(
+                "https://keepinbasket.ortdemo.com/api/createCountry",
+                body,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Accept: "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (storeCountry.data.status === true) {
+                toast.success(storeCountry.data.message);
+                // setTimeout(() => {
+                //     window.location.href = "/product_master";
+                // }, 1000);
+            } else {
+                toast.error(storeCountry.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong while uploading Country");
+        }
+    }
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -14,7 +79,19 @@ function Country_master() {
         }
     }, [dispatch, country_status])
 
-    const getcountryInfo = list?.data || []
+    const getcountryInfo = list?.data || [];
+
+    const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+
+      // 🔍 filter countries when search changes
+    useEffect(() => {
+        const result = getcountryInfo.filter((item) =>
+                item.country_name.toLowerCase().includes(search.toLowerCase())
+        );
+        setFilteredData(result);
+    }, [search, getcountryInfo])
+
 
     const columns = [
         { name: "Country", cell: row => (<><img src={row.country_flag} /> &nbsp;&nbsp;&nbsp;{row.country_name}</>) },
@@ -68,28 +145,35 @@ function Country_master() {
                                 <div className="row">
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                                         <label className="fw-semibold mb-2">Country Name</label>
-                                        <input type="text" className="form-control" name="country_name" id="country_name" />
+                                        <input type="text" className="form-control" name="country_name" id="country_name" onChange={(e)=>handleKeyChange(e)}/>
                                     </div>
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                                         <label className="fw-semibold mb-2">Country Code</label>
-                                        <input type="text" className="form-control" name="country_code" id="country_code" />
+                                        <input type="text" className="form-control" name="country_code" id="country_code" onChange={(e)=>handleKeyChange(e)}/>
                                     </div>
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                                         <label className="fw-semibold mb-2">Country Flag</label>
-                                        <input type="file" className="form-control" name="uploadCategories" id="uploadCategories" />
+                                        <input type="file" className="form-control" name="country_flag" id="country_flag" onChange={(e)=>handleKeyChange(e)}/>
                                     </div>
                                 </div>
                                 <div className="col-md-12 text-end">
-                                    <button type="button" className="btn btn-sm btn-primary" id="filter">Submit</button>
+                                    <button type="button" className="btn btn-sm btn-primary" id="filter" onClick={(e)=>submitCountry(e)}>Submit</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div className="card card-flush">
                         <div className="card-body">
+                            <input
+                                type="text"
+                                placeholder="Search by country name..."
+                                className="form-control mb-3"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
                             <DataTable
                                 columns={columns}
-                                data={getcountryInfo}
+                                data={filteredData}
                                 pagination
                                 highlightOnHover
                                 striped
