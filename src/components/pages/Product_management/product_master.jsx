@@ -3,7 +3,9 @@ import { NavLink } from "react-router";
 import { useDispatch, useSelector } from 'react-redux'
 import { getproductlist } from '../../../Producer/product'
 import DataTable from "react-data-table-component";
-
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import Swal from 'sweetalert2'
 
 function Product_master() {
     const { list, product_status } = useSelector((state) => state.product_list)
@@ -18,6 +20,72 @@ function Product_master() {
 
     const getProductInfo = list?.data || [];
 
+    //Update Change status
+    const updateVisibility = async (e,row) => {
+
+        const body = {
+            id : row.product_id,
+            status : (e.target.checked) ? 1 : 0
+        }
+
+        try{
+            const token = localStorage.getItem("admin_access_token")
+            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/updateProductStatusById",body,{
+                headers:{
+                    Accept:"application/json",
+                    Authorization:`Bearer ${token}`
+                }
+            });
+
+            if(changeStatus.data.status){
+                toast.success(changeStatus.data.message);
+            }else{
+                toast.error(changeStatus.data.message)
+            }
+        }catch(e){
+            console.log("error>",e.message)
+        }
+
+    }
+
+    //delete product
+    const deleteProduct = async (row) => {
+
+        const body = {
+            id:row.product_id
+        }
+
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        })
+
+        if (!result.isConfirmed) return;
+
+        try{
+            const token = localStorage.getItem('admin_access_token')
+            const delete_product = await axios.post("https://keepinbasket.ortdemo.com/api/deleteProductById",body,{
+                headers:{
+                    Accept:"application/json",
+                    Authorization:`Bearer ${token}`
+                }
+            })
+
+            if(delete_product.data.status){
+                toast.success(delete_product.data.message)
+            }else{
+                toast.error(delete_product.data.message)
+            }
+        }catch(e){
+            console.log("erroe",e)
+        }
+    }
+
     const columns = [
         { name: "Product Name", selector: row => row.product_name, sortable: true },
         { name: "Current Price", selector: row => row.current_price, sortable: true },
@@ -26,7 +94,7 @@ function Product_master() {
         {
             name: "Visiblity", cell: row => (
                 <>
-                    <input type="checkbox" className="form-check-input " />
+                    <input type="checkbox" className="form-check-input " checked={row.status===1} onChange={(e)=>updateVisibility(e,row)}/>
                 </>
             )
         },
@@ -37,7 +105,7 @@ function Product_master() {
                     <button title="View" className="btn btn-sm btn-outline-success me-2">
                         <i className="fa-solid fa-eye"></i>
                     </button>
-                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2">
+                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e)=>deleteProduct(row)}>
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
                     <button title="Update" className="btn btn-sm btn-outline-secondary">

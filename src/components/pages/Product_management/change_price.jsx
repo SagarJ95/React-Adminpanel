@@ -3,7 +3,9 @@ import { NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { changePriceList } from '../../../Producer/change_price'
 import DataTable from "react-data-table-component";
-
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import Swal from 'sweetalert2'
 
 function Change_price() {
     const { list, changeprice_status } = useSelector((state) => state.change_price_list)
@@ -22,12 +24,11 @@ function Change_price() {
 
     const submitPrice = async (row) => {
        const current_price = prices[row.id] ?? row.current_price;
-       console.log("id>>",row.id)
-       console.log("price>>",current_price)
 
-       const body = new FormData();
-               body.append("product_id", row.id);
-               body.append("price", current_price);
+                const body = {
+                    product_id : row.id,
+                    price:current_price
+                }
 
                try {
                    const token = localStorage.getItem("admin_access_token");
@@ -43,11 +44,8 @@ function Change_price() {
                        }
                    );
 
-                   if (ChangePrice.data.status === true) {
+                   if (ChangePrice.data.status) {
                        toast.success(ChangePrice.data.message);
-                       // setTimeout(() => {
-                       //     window.location.href = "/product_master";
-                       // }, 1000);
                    } else {
                        toast.error(ChangePrice.data.message);
                    }

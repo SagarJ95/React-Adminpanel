@@ -3,6 +3,9 @@ import { NavLink } from 'react-router'
 import { useSelector, useDispatch } from 'react-redux'
 import { customerlist } from '../../Producer/customerManagement'
 import DataTable from "react-data-table-component";
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import Swal from 'sweetalert2'
 
 function Customer_management() {
   const { list, customer_status } = useSelector((state) => state.customer_list)
@@ -17,6 +20,35 @@ function Customer_management() {
 
   const listingInfo = list?.data || [];
 
+
+  //Update Change status
+    const updateVisibility = async (e,row) => {
+
+        const body = {
+            customer_id : row.id,
+            status : (e.target.checked) ? 1 : 0
+        }
+
+        try{
+            const token = localStorage.getItem("admin_access_token")
+            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/activationStatus",body,{
+                headers:{
+                    Accept:"application/json",
+                    Authorization:`Bearer ${token}`
+                }
+            });
+
+            if(changeStatus.data.status){
+                toast.success(changeStatus.data.message);
+            }else{
+                toast.error(changeStatus.data.message)
+            }
+        }catch(e){
+            console.log("error>",e.message)
+        }
+
+    }
+
   const columns = [
     { name: "Name", selector: row => row.customer_name, sortable: true },
     { name: "Contact No.", selector: row => row.contact_no, sortable: true },
@@ -26,7 +58,7 @@ function Customer_management() {
     {
       name: "Visiblity", cell: row => (
         <>
-          <input type="checkbox" className="form-check-input " />
+          <input type="checkbox" className="form-check-input " checked={row.visibilty_status==1} onChange={(e)=>updateVisibility(e,row)}/>
         </>
       )
     },

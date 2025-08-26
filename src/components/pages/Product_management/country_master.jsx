@@ -4,6 +4,8 @@ import { getcountrylist } from '../../../Producer/country_master'
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import DataTable from "react-data-table-component";
+import axios from "axios";
+import Swal from 'sweetalert2'
 
 function Country_master() {
     const { list, country_status } = useSelector((state) => state.country_master_list)
@@ -32,6 +34,7 @@ function Country_master() {
         }
     }
 
+    //Add country data
     const submitCountry = async (e)=>{
          e.preventDefault();
 
@@ -71,6 +74,73 @@ function Country_master() {
             toast.error("Something went wrong while uploading Country");
         }
     }
+
+    //update status
+    const updateVisibility = async (e,row) => {
+
+        const body = {
+            country_id : row.id,
+            status : (e.target.checked) ? 1 : 0
+        }
+
+        try{
+            const token = localStorage.getItem("admin_access_token")
+            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/updateCountryStatusById",body,{
+                headers:{
+                    Accept:"application/json",
+                    Authorization:`Bearer ${token}`
+                }
+            });
+
+            if(changeStatus.data.status){
+                toast.success(changeStatus.data.message);
+            }else{
+                toast.error(changeStatus.data.message)
+            }
+        }catch(e){
+            console.log("error>",e.message)
+        }
+
+    }
+
+    //delete country
+    const deleteCountry = async (row) => {
+console.log("row>",row)
+        const body = {
+            country_id:row.id
+        }
+
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        })
+
+        if (!result.isConfirmed) return;
+
+        try{
+            const token = localStorage.getItem('admin_access_token')
+            const delete_country = await axios.post("https://keepinbasket.ortdemo.com/api/deleteCountryById",body,{
+                headers:{
+                    Accept:"application/json",
+                    Authorization:`Bearer ${token}`
+                }
+            })
+
+            if(delete_country.data.status){
+                toast.success(delete_country.data.message)
+            }else{
+                toast.error(delete_country.data.message)
+            }
+        }catch(e){
+            console.log("erroe",e)
+        }
+    }
+
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -82,7 +152,7 @@ function Country_master() {
     const getcountryInfo = list?.data || [];
 
     const [search, setSearch] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
 
       // 🔍 filter countries when search changes
     useEffect(() => {
@@ -99,7 +169,7 @@ function Country_master() {
         {
             name: "Visiblity", cell: row => (
                 <>
-                    <input type="checkbox" className="form-check-input " />
+                    <input type="checkbox" className="form-check-input " checked={row.status===1} onChange={(e)=>updateVisibility(e,row)}/>
                 </>
             )
         },
@@ -110,7 +180,7 @@ function Country_master() {
                     <button title="Edit" className="btn btn-sm btn-outline-secondary me-2">
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button title="Update" className="btn btn-sm btn-outline-secondary">
+                    <button title="Delete" className="btn btn-sm btn-outline-secondary" onClick={(e)=>deleteCountry(row)}>
                         <i className="fa-solid fa-arrows-rotate"></i>
                     </button>
                 </>

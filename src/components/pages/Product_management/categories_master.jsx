@@ -5,6 +5,7 @@ import { categorylist } from '../../../Producer/category'
 import DataTable from 'react-data-table-component'
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
+import Swal from 'sweetalert2'
 
 function Categories_master() {
     const { list, category_status } = useSelector((state) => state.category_list)
@@ -18,6 +19,72 @@ function Categories_master() {
 
     const catgoryList = list.data;
 
+    //Update Change status
+    const updateVisibility = async (e,row) => {
+
+        const body = {
+            category_id : row.cat_id,
+            status : (e.target.checked) ? 1 : 0
+        }
+
+        try{
+            const token = localStorage.getItem("admin_access_token")
+            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/updateCategoryStatusById",body,{
+                headers:{
+                    Accept:"application/json",
+                    Authorization:`Bearer ${token}`
+                }
+            });
+
+            if(changeStatus.data.status){
+                toast.success(changeStatus.data.message);
+            }else{
+                toast.error(changeStatus.data.message)
+            }
+        }catch(e){
+            console.log("error>",e.message)
+        }
+
+    }
+
+    //delete category
+    const deleteCategory = async (row) => {
+
+        const body = {
+            category_id:row.cat_id
+        }
+
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        })
+
+        if (!result.isConfirmed) return;
+
+        try{
+            const token = localStorage.getItem('admin_access_token')
+            const delete_Category = await axios.post("https://keepinbasket.ortdemo.com/api/deleteCategoryById",body,{
+                headers:{
+                    Accept:"application/json",
+                    Authorization:`Bearer ${token}`
+                }
+            })
+
+            if(delete_Category.data.status){
+                toast.success(delete_Category.data.message)
+            }else{
+                toast.error(delete_Category.data.message)
+            }
+        }catch(e){
+            console.log("erroe",e)
+        }
+    }
+
     const columns = [
         { name: 'Category_name', selector: row => row.category_name, sortable: true },
         { name: 'Category_description', selector: row => row.description, sortable: true },
@@ -25,7 +92,7 @@ function Categories_master() {
         {
             name: "Visiblity", cell: row => (
                 <>
-                    <input type="checkbox" className="form-check-input " />
+                    <input type="checkbox" className="form-check-input " checked={row.visibility_status==1} onChange={(e)=>updateVisibility(e,row)}/>
                 </>
             )
         },
@@ -36,7 +103,7 @@ function Categories_master() {
                     <button title="Edit" className="btn btn-sm btn-outline-secondary me-2">
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button title="Update" className="btn btn-sm btn-outline-secondary">
+                    <button title="Delete" className="btn btn-sm btn-outline-secondary" onClick={(e)=>deleteCategory(row)}>
                         <i className="fa-solid fa-arrows-rotate"></i>
                     </button>
                 </>
