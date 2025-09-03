@@ -10,6 +10,7 @@ import Swal from 'sweetalert2'
 function Country_master() {
     const { list, country_status } = useSelector((state) => state.country_master_list)
     const [formData,setFormData] = useState({
+        country_id:"",
         country_name:"",
         country_code:"",
         country_flag:""
@@ -21,16 +22,16 @@ function Country_master() {
          if (type === "file") {
             if (name === "country_flag") {
 
-                setFormData({
-                    ...formData,
+                setFormData((prev)=>({
+                    ...prev,
                     [name]: files[0],
-                });
+                }));
             }
         } else {
-            setFormData({
-                ...formData,
+            setFormData((prev)=>({
+                ...prev,
                 [name]: value,
-            });
+            }));
         }
     }
 
@@ -63,9 +64,13 @@ function Country_master() {
 
             if (storeCountry.data.status === true) {
                 toast.success(storeCountry.data.message);
-                // setTimeout(() => {
-                //     window.location.href = "/product_master";
-                // }, 1000);
+                dispatch(getcountrylist());
+                setFormData({
+                    country_id:"",
+                    country_name:"",
+                    country_code:"",
+                    country_flag:""
+                })
             } else {
                 toast.error(storeCountry.data.message);
             }
@@ -105,7 +110,6 @@ function Country_master() {
 
     //delete country
     const deleteCountry = async (row) => {
-console.log("row>",row)
         const body = {
             country_id:row.id
         }
@@ -154,7 +158,7 @@ console.log("row>",row)
     const [search, setSearch] = useState("");
     const [filteredData, setFilteredData] = useState([]);
 
-      // 🔍 filter countries when search changes
+      // filter countries when search changes
     useEffect(() => {
         const result = getcountryInfo.filter((item) =>
                 item.country_name.toLowerCase().includes(search.toLowerCase())
@@ -162,10 +166,68 @@ console.log("row>",row)
         setFilteredData(result);
     }, [search, getcountryInfo])
 
+    //fetch country (fetchCountry)
+    const fetchCountry = (row) => {
+        console.log("row",row)
+        setFormData({
+            country_id:row.id,
+            country_name:row.country_name,
+            country_code:row.code,
+            country_flag:row.country_flag
+        })
+    }
+
+    const UpdateCountry = async(e) => {
+        e.preventDefault()
+
+        const body = new FormData();
+        body.append("country_name", formData.country_name);
+        body.append("country_code", formData.country_code);
+        body.append("country_id", formData.country_id);
+
+
+        if (formData.country_flag) {
+            body.append("country_flag", formData.country_flag);
+        }
+
+
+        try {
+            const token = localStorage.getItem("admin_access_token");
+
+            const updateCountry = await axios.post(
+                "https://keepinbasket.ortdemo.com/api/updateCountryById",
+                body,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Accept: "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (updateCountry.data.status === true) {
+                toast.success(updateCountry.data.message);
+                dispatch(getcountrylist());
+                setFormData({
+                    country_id:"",
+                    country_name:"",
+                    country_code:"",
+                    country_flag:""
+                })
+            } else {
+                toast.error(updateCountry.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong while uploading Country");
+        }
+    }
+
 
     const columns = [
         { name: "Country", cell: row => (<><img src={row.country_flag} /> &nbsp;&nbsp;&nbsp;{row.country_name}</>) },
-        { name: "Country Code", selector: row => row.country_name, sortable: true },
+        { name: "Country Code", selector: row => row.code, sortable: true },
         {
             name: "Visiblity", cell: row => (
                 <>
@@ -177,7 +239,7 @@ console.log("row>",row)
             name: "Action",
             cell: row => (
                 <>
-                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2">
+                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e)=>fetchCountry(row)}>
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
                     <button title="Delete" className="btn btn-sm btn-outline-secondary" onClick={(e)=>deleteCountry(row)}>
@@ -211,23 +273,32 @@ console.log("row>",row)
                 <div id="kt_app_content_container" className="app-container container-fluid">
                     <div className="card card-flush mb-3 filter_card">
                         <div className="card-body">
-                            <form id="filterForm" className="form fv-plugins-bootstrap5 fv-plugins-framework">
+                            <form id="filterForm" className="form fv-plugins-bootstrap5 fv-plugins-framework" onSubmit={formData.country_id ? UpdateCountry : submitCountry}>
                                 <div className="row">
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
+                                        <input type="hidden" className="form-control" name="id" id="id" value={formData.country_id || ''}/>
                                         <label className="fw-semibold mb-2">Country Name</label>
-                                        <input type="text" className="form-control" name="country_name" id="country_name" onChange={(e)=>handleKeyChange(e)}/>
+                                        <input type="text" className="form-control" name="country_name" id="country_name" value={formData.country_name || ''} onChange={(e)=>handleKeyChange(e)}/>
                                     </div>
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                                         <label className="fw-semibold mb-2">Country Code</label>
-                                        <input type="text" className="form-control" name="country_code" id="country_code" onChange={(e)=>handleKeyChange(e)}/>
+                                        <input type="text" className="form-control" name="country_code" id="country_code"  value={formData.country_code || ''} onChange={(e)=>handleKeyChange(e)}/>
                                     </div>
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                                         <label className="fw-semibold mb-2">Country Flag</label>
-                                        <input type="file" className="form-control" name="country_flag" id="country_flag" onChange={(e)=>handleKeyChange(e)}/>
+                                        <input type="file" className="form-control" name="country_flag" id="country_flag"  onChange={(e)=>handleKeyChange(e)}/>
+                                        {formData.country_flag && typeof formData.country_flag === "string" && (
+                                            <img
+                                                src={formData.country_flag}
+                                                alt="Country Flag"
+                                                style={{ width: "30px", marginTop: "3px" }}
+                                            />
+                                            )}
+
                                     </div>
                                 </div>
                                 <div className="col-md-12 text-end">
-                                    <button type="button" className="btn btn-sm btn-primary" id="filter" onClick={(e)=>submitCountry(e)}>Submit</button>
+                                    <button type="submit" className="btn btn-sm btn-primary" id="filter" >Submit</button>
                                 </div>
                             </form>
                         </div>

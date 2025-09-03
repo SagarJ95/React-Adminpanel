@@ -11,6 +11,9 @@ function Categories_master() {
     const { list, category_status } = useSelector((state) => state.category_list)
     const dispatch = useDispatch()
 
+    const [text,setText] = useState('Add');
+
+
     useEffect(() => {
         if (category_status == 'idle') {
             dispatch(categorylist())
@@ -85,6 +88,27 @@ function Categories_master() {
         }
     }
 
+     const [editCategory, setEditCategory] = useState({
+        id: "",
+        name: "",
+        description: ""
+    });
+
+
+    //call modal
+    const callModal = (e,row) => {
+        setText('Update')
+        setEditCategory({
+            id: row.cat_id,
+            name: row.category_name,
+            description: row.description
+        });
+
+        // open modal manually
+        const modal = new window.bootstrap.Modal(document.getElementById("kt_modal_add_customer"));
+        modal.show();
+    };
+
     const columns = [
         { name: 'Category_name', selector: row => row.category_name, sortable: true },
         { name: 'Category_description', selector: row => row.description, sortable: true },
@@ -100,7 +124,7 @@ function Categories_master() {
             name: "Action",
             cell: row => (
                 <>
-                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2">
+                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e)=>callModal(e,row)}>
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
                     <button title="Delete" className="btn btn-sm btn-outline-secondary" onClick={(e)=>deleteCategory(row)}>
@@ -111,24 +135,23 @@ function Categories_master() {
         }
     ]
 
-    const [fromData,setfromData] = useState({
-        name:"",
-        description:""
-    })
-
-    const handleOnchange = (e) => {
-        setfromData({...fromData,[e.target.name]:e.target.value})
+    const handleOnchange = (e,editCategory) => {
+        //setfromData({...fromData,[e.target.name]:e.target.value})
+       const { name, value } = e.target;
+        setEditCategory((prev) => ({
+            ...prev,
+            [name]: value,
+        }))
     }
 
 
-    const addCategorysubmit = async (e) => {
+     const addCategorysubmit = async (e) => {
         e.preventDefault();
-
         const token = localStorage.getItem('admin_access_token');
 
         const body = {
-            category_name : fromData.name,
-            description: fromData.description
+            category_name : editCategory.name,
+            description: editCategory.description
         }
 
         const storeCategory = await axios.post("https://keepinbasket.ortdemo.com/api/createCategory",body,{
@@ -142,9 +165,54 @@ function Categories_master() {
         if(storeCategory.data.status == true){
              $("#kt_modal_add_customer").modal("hide");
             toast.success(`✅ ${storeCategory.data.message}`);
+            // close modal
+            const modalEl = document.getElementById("kt_modal_add_customer");
+            const modal = window.bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            dispatch(categorylist());
+            resetForm();
         }else{
             toast.error(`✅ ${storeCategory.data.message}!`)
         }
+     }
+
+    //update category
+    const updateCategory = async(e) => {
+            e.preventDefault();
+
+            const token = localStorage.getItem('admin_access_token');
+
+            const body = {
+                category_id:editCategory.id,
+                category_name : editCategory.name,
+                description: editCategory.description
+            }
+
+            const updateCategory = await axios.post("https://keepinbasket.ortdemo.com/api/updateCategoryById",body,{
+                headers:{
+                    Accept:"application/json",
+                    Authorization:`Bearer ${token}`
+                }
+            })
+
+
+            if(updateCategory.data.status == true){
+                $("#kt_modal_add_customer").modal("hide");
+                    toast.success(updateCategory.data.message);
+                    // close modal
+                    const modalEl = document.getElementById("kt_modal_add_customer");
+                    const modal = window.bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+                    dispatch(categorylist());
+                    resetForm();
+            }else{
+                toast.error(`✅ ${updateCategory.data.message}!`)
+            }
+        }
+
+    const resetForm = () => {
+        setEditCategory({ id: "", name: "", description: "" });
+        setText("Add");
     }
 
     return (
@@ -175,7 +243,7 @@ function Categories_master() {
                 <div id="kt_app_content_container" className="app-container container-fluid">
                     <div className="card card-flush mb-3 filter_card">
                         <div className="card-body">
-                            <form id="filterForm" className="form fv-plugins-bootstrap5 fv-plugins-framework">
+                            <form id="filterForm" className="form fv-plugins-bootstrap5 fv-plugins-framework" >
                                 <div className="row">
                                     <div className="col-md-12 mb-3 fv-row fv-plugins-icon-container">
                                         <label className="fw-semibold mb-2">Upload Categories</label>
@@ -217,30 +285,31 @@ function Categories_master() {
             <div className="modal fade" id="kt_modal_add_customer" tabIndex={-1} aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered mw-650px">
                     <div className="modal-content">
-                        <form className="form fv-plugins-bootstrap5 fv-plugins-framework" action="#" id="kt_modal_add_customer_form" data-kt-redirect="/metronic8/demo1/apps/customers/list.html">
+                        <form className="form fv-plugins-bootstrap5 fv-plugins-framework"  id="kt_modal_add_customer_form"   onSubmit={editCategory.id ? updateCategory : addCategorysubmit}>
                             <div className="modal-header" id="kt_modal_add_customer_header">
-                                <h2 className="fw-bold">Add a Category</h2>
+                                <h2 className="fw-bold">{text} a Category</h2>
                                 <div id="kt_modal_add_customer_close" className="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
 
                                     <i className="ki-duotone ki-cross fs-1"><span className="path1" /><span className="path2" /></i>                  </div>
                             </div>
                             <div className="modal-body py-10 px-lg-17">
                                 <div className="fv-row mb-7 fv-plugins-icon-container">
+                                    <input type="hidden" name="id" value={editCategory.id || ''}/>
                                     <label className="required fs-6 fw-semibold mb-2">Name</label>
-                                    <input type="text" className="form-control form-control-solid" placeholder="" name="name"  onChange={(e)=>handleOnchange(e)}/>
+                                    <input type="text" className="form-control form-control-solid" placeholder="" name="name" value={editCategory.name || ''}  onChange={(e)=>handleOnchange(e,editCategory)}/>
 
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" /></div>
 
                                 <div className="fv-row ">
                                     <label className="fs-6 fw-semibold mb-2">Description</label>
-                                    <textarea className="form-control form-control-solid" placeholder="" name="description" onChange={(e)=>handleOnchange(e)}/>
+                                    <textarea className="form-control form-control-solid" placeholder="" name="description" value={editCategory.description || ''} onChange={(e)=>handleOnchange(e,editCategory)}/>
                                 </div>
                             </div>
                             <div className="modal-footer flex-center">
-                                <button type="reset" id="kt_modal_add_customer_cancel" className="btn btn-light me-3" data-bs-dismiss="modal">
+                                <button type="reset" id="kt_modal_add_customer_cancel" className="btn btn-light me-3" data-bs-dismiss="modal" onClick={resetForm}>
                                     Discard
                                 </button>
-                                <button type="submit" id="kt_modal_add_customer_submit" className="btn btn-primary" onClick={(e)=>addCategorysubmit(e)}>
+                                <button type="submit" id="kt_modal_add_customer_submit" className="btn btn-primary" >
                                     <span className="indicator-label">
                                         Submit
                                     </span>

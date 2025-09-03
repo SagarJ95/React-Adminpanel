@@ -28,7 +28,7 @@ function App() {
           <Route path='/product_master' element={<Product_master/>}/>
           <Route path='/country_master' element={<Country_master/>}/>
           <Route path='/change_price' element={<Change_price/>}/>
-          <Route path='/add_product' element={<Add_product/>}/>
+          <Route path='/add_product/:id?/:page?' element={<Add_product/>}/>
         </Route>
       </Routes>
      </>

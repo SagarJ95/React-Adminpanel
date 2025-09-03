@@ -6,10 +6,12 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import Swal from 'sweetalert2'
+import { useNavigate } from "react-router-dom";
 
 function Product_master() {
     const { list, product_status } = useSelector((state) => state.product_list)
     const dispatch = useDispatch()
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (product_status == 'idle') {
@@ -86,6 +88,13 @@ function Product_master() {
         }
     }
 
+    const viewProduct = (row) => {
+       navigate(`/add_product/${row.product_id}/view`,{ state: row });
+    }
+    const editProduct = (row) => {
+        navigate(`/add_product/${row.product_id}/edit`,{ state: row });
+    }
+
     const columns = [
         { name: "Product Name", selector: row => row.product_name, sortable: true },
         { name: "Current Price", selector: row => row.current_price, sortable: true },
@@ -102,13 +111,13 @@ function Product_master() {
             name: "Action",
             cell: row => (
                 <>
-                    <button title="View" className="btn btn-sm btn-outline-success me-2">
+                    <button title="View" className="btn btn-sm btn-outline-success me-2" onClick={(e)=>viewProduct(row)}>
                         <i className="fa-solid fa-eye"></i>
                     </button>
                     <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e)=>deleteProduct(row)}>
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button title="Update" className="btn btn-sm btn-outline-secondary">
+                    <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e)=>editProduct(row)}>
                         <i className="fa-solid fa-arrows-rotate"></i>
                     </button>
                 </>
