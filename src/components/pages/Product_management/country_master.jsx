@@ -158,6 +158,7 @@ function Country_master() {
     const [search, setSearch] = useState("");
     const [filteredData, setFilteredData] = useState([]);
 
+      // cls
       // filter countries when search changes
     useEffect(() => {
         const result = getcountryInfo.filter((item) =>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Layout from './components/layout/layout'
 import Login from './components/pages/login'
-import { Routes,Route } from 'react-router'
+import { BrowserRouter,Routes,Route } from 'react-router'
 import { useLocation } from 'react-router'
 import Dashboard from './components/pages/dashboard'
 import Order_management from './components/pages/order_management'
@@ -11,7 +11,8 @@ import Product_master from './components/pages/Product_management/product_master
 import Change_price from './components/pages/Product_management/change_price'
 import Country_master from './components/pages/Product_management/country_master'
 import Add_product from './components/pages/Product_management/add_product'
-
+import CheckAthanciate from './components/CheckAuthticate'
+import Add_customer from './components/pages/add_cutomer'
 
 function App() {
   const location = useLocation()
@@ -20,7 +21,13 @@ function App() {
     <>
       <Routes>
       <Route path="/admin" element={<Login />} />
-        <Route element={<Layout />}>
+         <Route
+            element={
+                <CheckAthanciate>
+                <Layout />
+                </CheckAthanciate>
+            }
+          >
           <Route path="/" element={<Dashboard />} />
           <Route path="/order_management" element={<Order_management />} />
           <Route path='/customer_management' element={<Customer_management/>}/>
@@ -29,6 +36,7 @@ function App() {
           <Route path='/country_master' element={<Country_master/>}/>
           <Route path='/change_price' element={<Change_price/>}/>
           <Route path='/add_product/:id?/:page?' element={<Add_product/>}/>
+          <Route path='/customer/:id?/:page?' element={<Add_customer/>}/>
         </Route>
       </Routes>
      </>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { NavLink } from 'react-router'
+import { NavLink, useNavigate } from 'react-router'
 import { useSelector, useDispatch } from 'react-redux'
 import { customerlist } from '../../Producer/customerManagement'
 import DataTable from "react-data-table-component";
@@ -10,7 +10,7 @@ import Swal from 'sweetalert2'
 function Customer_management() {
   const { list, customer_status } = useSelector((state) => state.customer_list)
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (customer_status == 'idle') {
       dispatch(customerlist())
@@ -40,6 +40,7 @@ function Customer_management() {
 
             if(changeStatus.data.status){
                 toast.success(changeStatus.data.message);
+                dispatch(customerlist())
             }else{
                 toast.error(changeStatus.data.message)
             }
@@ -48,6 +49,17 @@ function Customer_management() {
         }
 
     }
+
+  //view page
+    const viewPage = (row) => {
+      console.log("row")
+      navigate(`/customer/${row.id}/view`,{state:row})
+  }
+
+  //edit
+    const editPage = (row) => {
+      navigate(`/customer/${row.id}/edit`,{state:row})
+  }
 
   const columns = [
     { name: "Name", selector: row => row.customer_name, sortable: true },
@@ -66,10 +78,10 @@ function Customer_management() {
       name: "Action",
       cell: row => (
         <>
-          <button title="View" className="btn btn-sm btn-outline-success me-2">
+          <button title="View" className="btn btn-sm btn-outline-success me-2" onClick={(e)=>viewPage(row)}>
             <i className="fa-solid fa-eye"></i>
           </button>
-          <button title="Update" className="btn btn-sm btn-outline-secondary">
+          <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e)=>editPage(row)}>
             <i className="fa-solid fa-arrows-rotate"></i>
           </button>
         </>
@@ -95,7 +107,7 @@ function Customer_management() {
             </ul>
           </div>
           <div className="d-flex align-items-center gap-2 gap-lg-3">
-            <NavLink to="/add_customer" className="btn btn-sm fw-bold btn-primary">Add Customer</NavLink>
+            <NavLink to="/customer" className="btn btn-sm fw-bold btn-primary">Add Customer</NavLink>
           </div>
 
         </div>
