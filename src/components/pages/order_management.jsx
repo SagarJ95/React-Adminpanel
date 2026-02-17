@@ -3,9 +3,10 @@ import { NavLink } from "react-router";
 import { useSelector, useDispatch } from 'react-redux'
 import { orderlist } from '../../Producer/orderManagement'
 import DataTable from "react-data-table-component";
-
+import { useNavigate } from "react-router-dom";
 
 function Order_management() {
+    const navigate = useNavigate();
     const { list, order_status } = useSelector((state) => state.order_list)
     const dispatch = useDispatch();
     const [tab, setTab] = useState(1)
@@ -17,7 +18,16 @@ function Order_management() {
         e.preventDefault()
         setTab(Number(e.target.name))
     }
+    console.log(list)
     const listingInfo = list?.data || [];
+
+    const viewOrder = (row) => {
+        navigate(`/order_management/view`, { state: row });
+    }
+
+    const editOrder = (row) => {
+        navigate('/order_management/edit', { state: row })
+    }
 
     const columns = [
         { name: "Order ID", selector: row => row.order_ref_id, sortable: true },
@@ -29,15 +39,20 @@ function Order_management() {
             name: "Action",
             cell: row => (
                 <>
-                    <button title="View" className="btn btn-sm btn-outline-success me-2">
+                    <button title="View" className="btn btn-sm btn-outline-success me-2" onClick={(e) => viewOrder(row)}>
                         <i className="fa-solid fa-eye"></i>
                     </button>
-                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2">
-                        <i className="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button title="Update" className="btn btn-sm btn-outline-secondary">
-                        <i className="fa-solid fa-arrows-rotate"></i>
-                    </button>
+                    {row.order_status != 5 && (
+                        <>
+                            <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e) => editOrder(row)}>
+                                <i className="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button title="Update" className="btn btn-sm btn-outline-secondary">
+                                <i className="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                        </>
+                    )}
+
                 </>
             ),
         }

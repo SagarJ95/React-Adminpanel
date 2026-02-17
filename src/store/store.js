@@ -6,6 +6,7 @@ import changePrice from '../Producer/change_price'
 import country_master from '../Producer/country_master'
 import customerInfo from '../Producer/customerManagement'
 import dashboardlist from "../Producer/dashboard";
+import OrderView from '../Producer/orderView'
 const store = configureStore({
     reducer: {
         order_list: listorder,
@@ -14,7 +15,8 @@ const store = configureStore({
         change_price_list: changePrice,
         country_master_list: country_master,
         customer_list: customerInfo,
-        dashboardlist: dashboardlist
+        dashboardlist: dashboardlist,
+        OrderView: OrderView
     }
 })
 

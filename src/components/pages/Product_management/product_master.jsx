@@ -23,29 +23,29 @@ function Product_master() {
     const getProductInfo = list?.data || [];
 
     //Update Change status
-    const updateVisibility = async (e,row) => {
+    const updateVisibility = async (e, row) => {
 
         const body = {
-            id : row.product_id,
-            status : (e.target.checked) ? 1 : 0
+            id: row.product_id,
+            status: (e.target.checked) ? 1 : 0
         }
 
-        try{
+        try {
             const token = localStorage.getItem("admin_access_token")
-            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/updateProductStatusById",body,{
-                headers:{
-                    Accept:"application/json",
-                    Authorization:`Bearer ${token}`
+            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/updateProductStatusById", body, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`
                 }
             });
 
-            if(changeStatus.data.status){
+            if (changeStatus.data.status) {
                 toast.success(changeStatus.data.message);
-            }else{
+            } else {
                 toast.error(changeStatus.data.message)
             }
-        }catch(e){
-            console.log("error>",e.message)
+        } catch (e) {
+            console.log("error>", e.message)
         }
 
     }
@@ -54,7 +54,7 @@ function Product_master() {
     const deleteProduct = async (row) => {
 
         const body = {
-            id:row.product_id
+            id: row.product_id
         }
 
         const result = await Swal.fire({
@@ -69,30 +69,30 @@ function Product_master() {
 
         if (!result.isConfirmed) return;
 
-        try{
+        try {
             const token = localStorage.getItem('admin_access_token')
-            const delete_product = await axios.post("https://keepinbasket.ortdemo.com/api/deleteProductById",body,{
-                headers:{
-                    Accept:"application/json",
-                    Authorization:`Bearer ${token}`
+            const delete_product = await axios.post("https://keepinbasket.ortdemo.com/api/deleteProductById", body, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`
                 }
             })
 
-            if(delete_product.data.status){
+            if (delete_product.data.status) {
                 toast.success(delete_product.data.message)
-            }else{
+            } else {
                 toast.error(delete_product.data.message)
             }
-        }catch(e){
-            console.log("erroe",e)
+        } catch (e) {
+            console.log("erroe", e)
         }
     }
 
     const viewProduct = (row) => {
-       navigate(`/add_product/${row.product_id}/view`,{ state: row });
+        navigate(`/add_product/${row.product_id}/view`, { state: row });
     }
     const editProduct = (row) => {
-        navigate(`/add_product/${row.product_id}/edit`,{ state: row });
+        navigate(`/add_product/${row.product_id}/edit`, { state: row });
     }
 
     const columns = [
@@ -103,7 +103,7 @@ function Product_master() {
         {
             name: "Visiblity", cell: row => (
                 <>
-                    <input type="checkbox" className="form-check-input " checked={row.status===1} onChange={(e)=>updateVisibility(e,row)}/>
+                    <input type="checkbox" className="form-check-input " checked={row.status === 1} onChange={(e) => updateVisibility(e, row)} />
                 </>
             )
         },
@@ -111,13 +111,13 @@ function Product_master() {
             name: "Action",
             cell: row => (
                 <>
-                    <button title="View" className="btn btn-sm btn-outline-success me-2" onClick={(e)=>viewProduct(row)}>
+                    <button title="View" className="btn btn-sm btn-outline-success me-2" onClick={(e) => viewProduct(row)}>
                         <i className="fa-solid fa-eye"></i>
                     </button>
-                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e)=>deleteProduct(row)}>
+                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e) => deleteProduct(row)}>
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e)=>editProduct(row)}>
+                    <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e) => editProduct(row)}>
                         <i className="fa-solid fa-arrows-rotate"></i>
                     </button>
                 </>

@@ -1,7 +1,25 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Login() {
+    const token = localStorage.getItem('admin_access_token')
+
+    if (token) {
+        return <Navigate to="/" replace />;
+    }
+
+    // if we want timeout effect
+    // const navigate = useNavigate();
+    // const token = localStorage.getItem("admin_access_token");
+
+    // useEffect(() => {
+    //     if (token) {
+    //         setTimeout(() => {
+    //             navigate("/order_management");
+    //         }, 1000);
+    //     }
+    // }, [token, navigate]);
+
     const [formData, setfromData] = useState({
         email: "",
         password: ""
