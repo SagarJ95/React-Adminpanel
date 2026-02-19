@@ -4,7 +4,7 @@ import axios from "axios";
 export const changePriceList = createAsyncThunk('changePrice/getchangeprice', async () => {
     const token = localStorage.getItem('admin_access_token')
 
-    const change_price = await axios.post("https://keepinbasket.ortdemo.com/api/getChangePriceProductlist", {}, {
+    const change_price = await axios.post(`${import.meta.env.VITE_API_URL}/api/getChangePriceProductlist`, {}, {
         headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`

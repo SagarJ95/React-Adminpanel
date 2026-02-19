@@ -8,7 +8,7 @@ export const orderlist = createAsyncThunk('order/getorderlist', async ({ order_s
         order_status: order_status
     }
 
-    let getorderInfo = await axios.post("https://keepinbasket.ortdemo.com/api/getOrderlist", body, {
+    let getorderInfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/getOrderlist`, body, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`

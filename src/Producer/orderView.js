@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 export const getOrderById = createAsyncThunk('order/orderViewDetails', async (id) => {
     const token = localStorage.getItem('admin_access_token');
-    const getOrderByIdInfo = await axios.post('https://keepinbasket.ortdemo.com/api/orderViewDetails', { order_id: id }, {
+    const getOrderByIdInfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/orderViewDetails`, { order_id: id }, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`

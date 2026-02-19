@@ -17,42 +17,42 @@ function Change_price() {
         }
     }, [dispatch, changeprice_status])
 
-    const [prices,setPrice]= useState({})
-    const handlePrice = (e,row) => {
-        setPrice({...prices,[row.id]: e.target.value})
+    const [prices, setPrice] = useState({})
+    const handlePrice = (e, row) => {
+        setPrice({ ...prices, [row.id]: e.target.value })
     }
 
     const submitPrice = async (row) => {
-       const current_price = prices[row.id] ?? row.current_price;
+        const current_price = prices[row.id] ?? row.current_price;
 
-                const body = {
-                    product_id : row.id,
-                    price:current_price
+        const body = {
+            product_id: row.id,
+            price: current_price
+        }
+
+        try {
+            const token = localStorage.getItem("admin_access_token");
+
+            const ChangePrice = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/changeProductPrice`,
+                body,
+                {
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
+            );
 
-               try {
-                   const token = localStorage.getItem("admin_access_token");
-
-                   const ChangePrice = await axios.post(
-                       "https://keepinbasket.ortdemo.com/api/changeProductPrice",
-                       body,
-                       {
-                           headers: {
-                               Accept: "application/json",
-                               Authorization: `Bearer ${token}`,
-                           },
-                       }
-                   );
-
-                   if (ChangePrice.data.status) {
-                       toast.success(ChangePrice.data.message);
-                   } else {
-                       toast.error(ChangePrice.data.message);
-                   }
-               } catch (error) {
-                   console.error(error);
-                   toast.error("Something went wrong");
-               }
+            if (ChangePrice.data.status) {
+                toast.success(ChangePrice.data.message);
+            } else {
+                toast.error(ChangePrice.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong");
+        }
     }
 
     const getchangepricelist = list?.data || [];
@@ -66,7 +66,7 @@ function Change_price() {
         {
             name: "Current Price", cell: row => (
                 <>
-                    <input type="text" className="form-control" name="current_price" value={prices[row.id] ?? row.current_price} onChange={(e)=>handlePrice(e,row)} />
+                    <input type="text" className="form-control" name="current_price" value={prices[row.id] ?? row.current_price} onChange={(e) => handlePrice(e, row)} />
                 </>
             )
         },

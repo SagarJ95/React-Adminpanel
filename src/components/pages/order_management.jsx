@@ -4,12 +4,17 @@ import { useSelector, useDispatch } from 'react-redux'
 import { orderlist } from '../../Producer/orderManagement'
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { getOrderById } from '../../Producer/orderView'
 
 function Order_management() {
     const navigate = useNavigate();
     const { list, order_status } = useSelector((state) => state.order_list)
     const dispatch = useDispatch();
     const [tab, setTab] = useState(1)
+    const [orderInfo, setorderInfo] = useState()
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         dispatch(orderlist({ order_status: tab }))
     }, [dispatch, tab])
@@ -18,7 +23,7 @@ function Order_management() {
         e.preventDefault()
         setTab(Number(e.target.name))
     }
-    console.log(list)
+
     const listingInfo = list?.data || [];
 
     const viewOrder = (row) => {
@@ -28,6 +33,94 @@ function Order_management() {
     const editOrder = (row) => {
         navigate('/order_management/edit', { state: row })
     }
+
+    //call modal
+    const callModal = (e, row) => {
+        setorderInfo(row)
+
+        setFormData({
+            order_id: "",
+            status: "",
+            date: "",
+            payment_status: ""
+        });
+        // open modal manually
+        const modal = new window.bootstrap.Modal(document.getElementById("kt_modal_update_date"));
+        modal.show();
+    };
+
+
+    const [fromData, setFormData] = useState({
+        order_id: "",
+        status: "",
+        date: "",
+        payment_status: ""
+    })
+
+    const handleInputlogic = (e) => {
+        const { name, value } = e.target
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+
+    const { single, single_status } = useSelector((state) => state.OrderView);
+    useEffect(() => {
+        if (orderInfo) {
+            dispatch(getOrderById(orderInfo.order_id));
+        }
+    }, [orderInfo, dispatch])
+
+    const formatDateToDDMMYYYY = (dateStr) => {
+        if (!dateStr) return "";
+
+        const [year, month, day] = dateStr.split("-");
+
+        return `${day}-${month}-${year}`;
+    };
+
+
+    const updateOrderStatus = async (e) => {
+        e.preventDefault()
+        const token = localStorage.getItem('admin_access_token')
+        if (!single.payment_status) {
+            toast.error("Payment Status Is required")
+            return;
+        }
+        setLoading(true);
+        const body = new FormData()
+        body.append("order_id", single.id)
+        body.append("status", fromData.status)
+        body.append("date", formatDateToDDMMYYYY(fromData.date))
+        body.append("payment_status", single.payment_status)
+
+        try {
+            const updateStatus = await axios.post(`${import.meta.env.VITE_API_URL}/api/changeOrderStatus`, body, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+            if (updateStatus.data.status === true) {
+                toast.success("Update Status Successfully")
+                const modalEl = document.getElementById("kt_modal_update_date");
+                const modal = window.bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+                dispatch(orderlist({ order_status: tab }))
+            } else {
+                toast.error("update Status Unsuccessfully")
+            }
+        } catch (err) {
+            toast.error("something went wrong")
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
 
     const columns = [
         { name: "Order ID", selector: row => row.order_ref_id, sortable: true },
@@ -47,8 +140,8 @@ function Order_management() {
                             <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e) => editOrder(row)}>
                                 <i className="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button title="Update" className="btn btn-sm btn-outline-secondary">
-                                <i className="fa-solid fa-arrows-rotate"></i>
+                            <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e) => callModal(e, row)}>
+                                <i className="fa-solid fa-trash"></i>
                             </button>
                         </>
                     )}
@@ -177,12 +270,7 @@ function Order_management() {
                             </div>
                             {/*end::Menu 1*/}
                         </div>
-                        {/*end::Filter menu*/}
-                        {/*begin::Secondary button*/}
-                        {/*end::Secondary button*/}
-                        {/*begin::Primary button*/}
-                        <a href="#" className="btn btn-sm fw-bold btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">Create</a>
-                        {/*end::Primary button*/}
+
                     </div>
                     {/*end::Actions*/}
                 </div>
@@ -230,6 +318,54 @@ function Order_management() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade" id="kt_modal_update_date" tabIndex={-1} aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered mw-650px">
+                    <div className="modal-content">
+                        <form className="form fv-plugins-bootstrap5 fv-plugins-framework" id="kt_modal_update_date_form" onSubmit={(e) => updateOrderStatus(e)}>
+                            <div className="modal-header" id="kt_modal_update_date_header">
+                                <h2 className="fw-bold">Change Order Status</h2>
+                                <div id="kt_modal_update_date_close" className="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
+
+                                    <i className="ki-duotone ki-cross fs-1"><span className="path1" /><span className="path2" /></i>                  </div>
+                            </div>
+                            <div className="modal-body py-10 px-lg-17">
+                                <div className="fv-row mb-7 fv-plugins-icon-container">
+
+                                    <label className="required fs-6 fw-semibold mb-2">Status</label>
+                                    <select name="status" className="form-control" onChange={handleInputlogic}>
+                                        <option>Update Status</option>
+                                        {tab == 1 && (<option value="2">Accepted</option>)}
+                                        {tab == 2 && (<option value="3">Shipped</option>)}
+                                        {(tab == 2 || tab == 3) && (<option value="4">Delivered</option>)}
+                                        {[1, 2, 3, 4].includes(tab) && (<option value="5">Cancelled</option>)}
+                                    </select>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" /></div>
+
+                                <div className="fv-row ">
+                                    <label className="fs-6 fw-semibold mb-2">Date</label>
+                                    <input type="date" className="form-control" name="date" onChange={handleInputlogic} />
+                                </div>
+                            </div>
+                            <div className="modal-footer flex-center">
+                                <button type="reset" id="kt_modal_add_customer_cancel" className="btn btn-light me-3" data-bs-dismiss="modal" >
+                                    Discard
+                                </button>
+                                <button type="submit" id="kt_modal_add_customer_submit" className="btn btn-primary" disabled={loading}>
+                                    {loading ? (
+                                        <>
+                                            <span className="spinner-border spinner-border-sm me-2"></span>
+                                            Updating...
+                                        </>
+                                    ) : (
+                                        "Update Status"
+                                    )}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

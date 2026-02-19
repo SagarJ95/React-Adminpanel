@@ -22,43 +22,43 @@ function Customer_management() {
 
 
   //Update Change status
-    const updateVisibility = async (e,row) => {
+  const updateVisibility = async (e, row) => {
 
-        const body = {
-            customer_id : row.id,
-            status : (e.target.checked) ? 1 : 0
-        }
-
-        try{
-            const token = localStorage.getItem("admin_access_token")
-            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/activationStatus",body,{
-                headers:{
-                    Accept:"application/json",
-                    Authorization:`Bearer ${token}`
-                }
-            });
-
-            if(changeStatus.data.status){
-                toast.success(changeStatus.data.message);
-                dispatch(customerlist())
-            }else{
-                toast.error(changeStatus.data.message)
-            }
-        }catch(e){
-            console.log("error>",e.message)
-        }
-
+    const body = {
+      customer_id: row.id,
+      status: (e.target.checked) ? 1 : 0
     }
 
+    try {
+      const token = localStorage.getItem("admin_access_token")
+      const changeStatus = await axios.post(`${import.meta.env.VITE_API_URL}/api/activationStatus`, body, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (changeStatus.data.status) {
+        toast.success(changeStatus.data.message);
+        dispatch(customerlist())
+      } else {
+        toast.error(changeStatus.data.message)
+      }
+    } catch (e) {
+      console.log("error>", e.message)
+    }
+
+  }
+
   //view page
-    const viewPage = (row) => {
-      console.log("row")
-      navigate(`/customer/${row.id}/view`,{state:row})
+  const viewPage = (row) => {
+    console.log("row")
+    navigate(`/customer/${row.id}/view`, { state: row })
   }
 
   //edit
-    const editPage = (row) => {
-      navigate(`/customer/${row.id}/edit`,{state:row})
+  const editPage = (row) => {
+    navigate(`/customer/${row.id}/edit`, { state: row })
   }
 
   const columns = [
@@ -70,7 +70,7 @@ function Customer_management() {
     {
       name: "Visiblity", cell: row => (
         <>
-          <input type="checkbox" className="form-check-input " checked={row.visibilty_status==1} onChange={(e)=>updateVisibility(e,row)}/>
+          <input type="checkbox" className="form-check-input " checked={row.visibilty_status == 1} onChange={(e) => updateVisibility(e, row)} />
         </>
       )
     },
@@ -78,10 +78,10 @@ function Customer_management() {
       name: "Action",
       cell: row => (
         <>
-          <button title="View" className="btn btn-sm btn-outline-success me-2" onClick={(e)=>viewPage(row)}>
+          <button title="View" className="btn btn-sm btn-outline-success me-2" onClick={(e) => viewPage(row)}>
             <i className="fa-solid fa-eye"></i>
           </button>
-          <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e)=>editPage(row)}>
+          <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e) => editPage(row)}>
             <i className="fa-solid fa-arrows-rotate"></i>
           </button>
         </>

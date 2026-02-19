@@ -5,7 +5,7 @@ import axios from "axios";
 export const dashboardlist = createAsyncThunk('dashboard/getdashboard', async () => {
     const token = localStorage.getItem('admin_access_token')
 
-    const dashboardInfo = await axios.post('https://keepinbasket.ortdemo.com/api/dashboard', {}, {
+    const dashboardInfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/dashboard`, {}, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`

@@ -141,7 +141,7 @@ function Add_product() {
             const token = localStorage.getItem("token");
 
             const storeProduct = await axios.post(
-                "https://keepinbasket.ortdemo.com/api/createProduct",
+                `${import.meta.env.VITE_API_URL}/api/createProduct`,
                 body,
                 {
                     headers: {
@@ -195,7 +195,7 @@ function Add_product() {
             const token = localStorage.getItem("token");
 
             const updateProduct = await axios.post(
-                "https://keepinbasket.ortdemo.com/api/updateProduct",
+                `${import.meta.env.VITE_API_URL}/api/updateProduct`,
                 body,
                 {
                     headers: {
@@ -319,7 +319,7 @@ function Add_product() {
                                 </div>
                                 <div className="col-md-12 text-end">
                                     <NavLink to='/product_master' className="btn btn-sm btn-primary" style={{ marginRight: "10px" }}>Back</NavLink>
-                                    <button type="submit" className="btn btn-sm btn-primary" id="filter">Submit</button>
+                                    {page !== "view" && (<button type="submit" className="btn btn-sm btn-primary" id="filter">Submit</button>)}
                                 </div>
                             </div>
                         </form>

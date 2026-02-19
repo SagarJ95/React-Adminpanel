@@ -38,7 +38,7 @@ function Login() {
             password: formData.password
         }
 
-        const storeInfo = await axios.post("https://keepinbasket.ortdemo.com/api/sign-in", body, {
+        const storeInfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/sign-in`, body, {
             headers: {
                 Accept: "application/json"
             }

@@ -4,7 +4,7 @@ import axios from "axios";
 export const getcountrylist = createAsyncThunk('country/getcountryinfo', async () => {
     const token = localStorage.getItem('admin_access_token');
 
-    const getcountry = await axios.post('https://keepinbasket.ortdemo.com/api/getcountrylist', {}, {
+    const getcountry = await axios.post(`${import.meta.env.VITE_API_URL}/api/getcountrylist`, {}, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`

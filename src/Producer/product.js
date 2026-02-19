@@ -4,7 +4,7 @@ import axios from "axios";
 export const getproductlist = createAsyncThunk('product/getproductlist', async () => {
     const token = localStorage.getItem('admin_access_token');
 
-    const getproductinfo = await axios.post('https://keepinbasket.ortdemo.com/api/getProductlist', {}, {
+    const getproductinfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/getProductlist`, {}, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`
@@ -14,9 +14,9 @@ export const getproductlist = createAsyncThunk('product/getproductlist', async (
     return getproductinfo.data
 })
 
-export const getProductById = createAsyncThunk('product/getProductById',async(id)=>{
+export const getProductById = createAsyncThunk('product/getProductById', async (id) => {
     const token = localStorage.getItem('admin_access_token');
-    const getProductByIdinfo = await axios.post('https://keepinbasket.ortdemo.com/api/getProductById', {id:id}, {
+    const getProductByIdinfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/getProductById`, { id: id }, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`
@@ -29,7 +29,7 @@ const product = createSlice({
     name: "product",
     initialState: {
         list: [],
-        single:null,
+        single: null,
         product_status: 'idle',
         single_product_status: "idle",
     },
@@ -46,17 +46,17 @@ const product = createSlice({
             })
 
         // Product by ID
-    builder
-      .addCase(getProductById.pending, (state) => {
-        state.single_product_status = "pending";
-      })
-      .addCase(getProductById.fulfilled, (state, action) => {
-        state.single_product_status = "success";
-        state.single = action.payload; // save product details
-      })
-      .addCase(getProductById.rejected, (state) => {
-        state.single_product_status = "rejected";
-      });
+        builder
+            .addCase(getProductById.pending, (state) => {
+                state.single_product_status = "pending";
+            })
+            .addCase(getProductById.fulfilled, (state, action) => {
+                state.single_product_status = "success";
+                state.single = action.payload; // save product details
+            })
+            .addCase(getProductById.rejected, (state) => {
+                state.single_product_status = "rejected";
+            });
     }
 })
 

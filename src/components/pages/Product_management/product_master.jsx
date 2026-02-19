@@ -32,7 +32,7 @@ function Product_master() {
 
         try {
             const token = localStorage.getItem("admin_access_token")
-            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/updateProductStatusById", body, {
+            const changeStatus = await axios.post(`${import.meta.env.VITE_API_URL}/api/updateProductStatusById`, body, {
                 headers: {
                     Accept: "application/json",
                     Authorization: `Bearer ${token}`
@@ -41,6 +41,7 @@ function Product_master() {
 
             if (changeStatus.data.status) {
                 toast.success(changeStatus.data.message);
+                dispatch(getproductlist())
             } else {
                 toast.error(changeStatus.data.message)
             }
@@ -71,7 +72,7 @@ function Product_master() {
 
         try {
             const token = localStorage.getItem('admin_access_token')
-            const delete_product = await axios.post("https://keepinbasket.ortdemo.com/api/deleteProductById", body, {
+            const delete_product = await axios.post(`${import.meta.env.VITE_API_URL}/api/deleteProductById`, body, {
                 headers: {
                     Accept: "application/json",
                     Authorization: `Bearer ${token}`
@@ -80,6 +81,7 @@ function Product_master() {
 
             if (delete_product.data.status) {
                 toast.success(delete_product.data.message)
+                dispatch(getproductlist())
             } else {
                 toast.error(delete_product.data.message)
             }
@@ -114,11 +116,11 @@ function Product_master() {
                     <button title="View" className="btn btn-sm btn-outline-success me-2" onClick={(e) => viewProduct(row)}>
                         <i className="fa-solid fa-eye"></i>
                     </button>
-                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e) => deleteProduct(row)}>
+                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e) => editProduct(row)}>
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e) => editProduct(row)}>
-                        <i className="fa-solid fa-arrows-rotate"></i>
+                    <button title="Update" className="btn btn-sm btn-outline-secondary" onClick={(e) => deleteProduct(row)}>
+                        <i className="fa-solid fa-trash"></i>
                     </button>
                 </>
             )

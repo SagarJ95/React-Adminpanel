@@ -73,7 +73,7 @@ function Order_view() {
         try {
             const token = localStorage.getItem('admin_access_token')
 
-            const updateInfo = await axios.post("https://keepinbasket.ortdemo.com/api/orderEditDetails", body, {
+            const updateInfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/orderEditDetails`, body, {
                 headers: {
                     "Accpte": "application/json",
                     Authorization: `Bearer ${token}`

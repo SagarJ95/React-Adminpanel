@@ -4,7 +4,7 @@ import axios from "axios";
 export const categorylist = createAsyncThunk('category/getcategorylist', async () => {
     const token = localStorage.getItem('admin_access_token');
 
-    const getlist = await axios.post('https://keepinbasket.ortdemo.com/api/getCategories', {}, {
+    const getlist = await axios.post(`${import.meta.env.VITE_API_URL}/api/getCategories`, {}, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`

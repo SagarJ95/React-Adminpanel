@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export const customerlist = createAsyncThunk('customer/getcustomerlist', async () => {
     const token = localStorage.getItem('admin_access_token')
-    let getcustomerInfo = await axios.post("https://keepinbasket.ortdemo.com/api/getCustomers", {}, {
+    let getcustomerInfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/getCustomers`, {}, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`

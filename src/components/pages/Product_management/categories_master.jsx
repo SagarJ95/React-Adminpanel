@@ -9,9 +9,10 @@ import Swal from 'sweetalert2'
 
 function Categories_master() {
     const { list, category_status } = useSelector((state) => state.category_list)
+    const [categoryList, setCategoryList] = useState([]);
     const dispatch = useDispatch()
 
-    const [text,setText] = useState('Add');
+    const [text, setText] = useState('Add');
 
 
     useEffect(() => {
@@ -23,29 +24,31 @@ function Categories_master() {
     const catgoryList = list.data;
 
     //Update Change status
-    const updateVisibility = async (e,row) => {
+    const updateVisibility = async (e, row) => {
+
 
         const body = {
-            category_id : row.cat_id,
-            status : (e.target.checked) ? 1 : 0
+            category_id: row.cat_id,
+            status: (e.target.checked) ? 1 : 0
         }
 
-        try{
+        try {
             const token = localStorage.getItem("admin_access_token")
-            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/updateCategoryStatusById",body,{
-                headers:{
-                    Accept:"application/json",
-                    Authorization:`Bearer ${token}`
+            const changeStatus = await axios.post(`${import.meta.env.VITE_API_URL}/api/updateCategoryStatusById`, body, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`
                 }
             });
 
-            if(changeStatus.data.status){
+            if (changeStatus.data.status) {
                 toast.success(changeStatus.data.message);
-            }else{
+                dispatch(categorylist())
+            } else {
                 toast.error(changeStatus.data.message)
             }
-        }catch(e){
-            console.log("error>",e.message)
+        } catch (e) {
+            console.log("error>", e.message)
         }
 
     }
@@ -54,7 +57,7 @@ function Categories_master() {
     const deleteCategory = async (row) => {
 
         const body = {
-            category_id:row.cat_id
+            category_id: row.cat_id
         }
 
         const result = await Swal.fire({
@@ -69,26 +72,27 @@ function Categories_master() {
 
         if (!result.isConfirmed) return;
 
-        try{
+        try {
             const token = localStorage.getItem('admin_access_token')
-            const delete_Category = await axios.post("https://keepinbasket.ortdemo.com/api/deleteCategoryById",body,{
-                headers:{
-                    Accept:"application/json",
-                    Authorization:`Bearer ${token}`
+            const delete_Category = await axios.post(`${import.meta.env.VITE_API_URL}/api/deleteCategoryById`, body, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`
                 }
             })
 
-            if(delete_Category.data.status){
+            if (delete_Category.data.status) {
                 toast.success(delete_Category.data.message)
-            }else{
+                dispatch(categorylist())
+            } else {
                 toast.error(delete_Category.data.message)
             }
-        }catch(e){
-            console.log("erroe",e)
+        } catch (e) {
+            console.log("erroe", e)
         }
     }
 
-     const [editCategory, setEditCategory] = useState({
+    const [editCategory, setEditCategory] = useState({
         id: "",
         name: "",
         description: ""
@@ -96,7 +100,7 @@ function Categories_master() {
 
 
     //call modal
-    const callModal = (e,row) => {
+    const callModal = (e, row) => {
         setText('Update')
         setEditCategory({
             id: row.cat_id,
@@ -116,7 +120,7 @@ function Categories_master() {
         {
             name: "Visiblity", cell: row => (
                 <>
-                    <input type="checkbox" className="form-check-input " checked={row.visibility_status==1} onChange={(e)=>updateVisibility(e,row)}/>
+                    <input type="checkbox" className="form-check-input " checked={row.visibility_status == 1} onChange={(e) => updateVisibility(e, row)} />
                 </>
             )
         },
@@ -124,20 +128,20 @@ function Categories_master() {
             name: "Action",
             cell: row => (
                 <>
-                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e)=>callModal(e,row)}>
+                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e) => callModal(e, row)}>
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button title="Delete" className="btn btn-sm btn-outline-secondary" onClick={(e)=>deleteCategory(row)}>
-                        <i className="fa-solid fa-arrows-rotate"></i>
+                    <button title="Delete" className="btn btn-sm btn-outline-secondary" onClick={(e) => deleteCategory(row)}>
+                        <i className="fa-solid fa-trash"></i>
                     </button>
                 </>
             )
         }
     ]
 
-    const handleOnchange = (e,editCategory) => {
+    const handleOnchange = (e, editCategory) => {
         //setfromData({...fromData,[e.target.name]:e.target.value})
-       const { name, value } = e.target;
+        const { name, value } = e.target;
         setEditCategory((prev) => ({
             ...prev,
             [name]: value,
@@ -145,25 +149,25 @@ function Categories_master() {
     }
 
 
-     const addCategorysubmit = async (e) => {
+    const addCategorysubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('admin_access_token');
 
         const body = {
-            category_name : editCategory.name,
+            category_name: editCategory.name,
             description: editCategory.description
         }
 
-        const storeCategory = await axios.post("https://keepinbasket.ortdemo.com/api/createCategory",body,{
-            headers:{
-                Accept:"application/json",
-                Authorization:`Bearer ${token}`
+        const storeCategory = await axios.post(`${import.meta.env.VITE_API_URL}/api/createCategory`, body, {
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`
             }
         })
 
 
-        if(storeCategory.data.status == true){
-             $("#kt_modal_add_customer").modal("hide");
+        if (storeCategory.data.status == true) {
+            $("#kt_modal_add_customer").modal("hide");
             toast.success(`✅ ${storeCategory.data.message}`);
             // close modal
             const modalEl = document.getElementById("kt_modal_add_customer");
@@ -171,44 +175,45 @@ function Categories_master() {
             modal.hide();
             dispatch(categorylist());
             resetForm();
-        }else{
-            toast.error(`✅ ${storeCategory.data.message}!`)
+        } else {
+
+            toast.error(`${storeCategory.data.message.category_name}!`)
         }
-     }
+    }
 
     //update category
-    const updateCategory = async(e) => {
-            e.preventDefault();
+    const updateCategory = async (e) => {
+        e.preventDefault();
 
-            const token = localStorage.getItem('admin_access_token');
+        const token = localStorage.getItem('admin_access_token');
 
-            const body = {
-                category_id:editCategory.id,
-                category_name : editCategory.name,
-                description: editCategory.description
-            }
-
-            const updateCategory = await axios.post("https://keepinbasket.ortdemo.com/api/updateCategoryById",body,{
-                headers:{
-                    Accept:"application/json",
-                    Authorization:`Bearer ${token}`
-                }
-            })
-
-
-            if(updateCategory.data.status == true){
-                $("#kt_modal_add_customer").modal("hide");
-                    toast.success(updateCategory.data.message);
-                    // close modal
-                    const modalEl = document.getElementById("kt_modal_add_customer");
-                    const modal = window.bootstrap.Modal.getInstance(modalEl);
-                    modal.hide();
-                    dispatch(categorylist());
-                    resetForm();
-            }else{
-                toast.error(`✅ ${updateCategory.data.message}!`)
-            }
+        const body = {
+            category_id: editCategory.id,
+            category_name: editCategory.name,
+            description: editCategory.description
         }
+
+        const updateCategory = await axios.post(`${import.meta.env.VITE_API_URL}/api/updateCategoryById`, body, {
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+
+        if (updateCategory.data.status == true) {
+            $("#kt_modal_add_customer").modal("hide");
+            toast.success(updateCategory.data.message);
+            // close modal
+            const modalEl = document.getElementById("kt_modal_add_customer");
+            const modal = window.bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            dispatch(categorylist());
+            resetForm();
+        } else {
+            toast.error(`✅ ${updateCategory.data.message}!`)
+        }
+    }
 
     const resetForm = () => {
         setEditCategory({ id: "", name: "", description: "" });
@@ -285,7 +290,7 @@ function Categories_master() {
             <div className="modal fade" id="kt_modal_add_customer" tabIndex={-1} aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered mw-650px">
                     <div className="modal-content">
-                        <form className="form fv-plugins-bootstrap5 fv-plugins-framework"  id="kt_modal_add_customer_form"   onSubmit={editCategory.id ? updateCategory : addCategorysubmit}>
+                        <form className="form fv-plugins-bootstrap5 fv-plugins-framework" id="kt_modal_add_customer_form" onSubmit={editCategory.id ? updateCategory : addCategorysubmit}>
                             <div className="modal-header" id="kt_modal_add_customer_header">
                                 <h2 className="fw-bold">{text} a Category</h2>
                                 <div id="kt_modal_add_customer_close" className="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
@@ -294,15 +299,15 @@ function Categories_master() {
                             </div>
                             <div className="modal-body py-10 px-lg-17">
                                 <div className="fv-row mb-7 fv-plugins-icon-container">
-                                    <input type="hidden" name="id" value={editCategory.id || ''}/>
+                                    <input type="hidden" name="id" value={editCategory.id || ''} />
                                     <label className="required fs-6 fw-semibold mb-2">Name</label>
-                                    <input type="text" className="form-control form-control-solid" placeholder="" name="name" value={editCategory.name || ''}  onChange={(e)=>handleOnchange(e,editCategory)}/>
+                                    <input type="text" className="form-control form-control-solid" placeholder="" name="name" value={editCategory.name || ''} onChange={(e) => handleOnchange(e, editCategory)} />
 
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" /></div>
 
                                 <div className="fv-row ">
                                     <label className="fs-6 fw-semibold mb-2">Description</label>
-                                    <textarea className="form-control form-control-solid" placeholder="" name="description" value={editCategory.description || ''} onChange={(e)=>handleOnchange(e,editCategory)}/>
+                                    <textarea className="form-control form-control-solid" placeholder="" name="description" value={editCategory.description || ''} onChange={(e) => handleOnchange(e, editCategory)} />
                                 </div>
                             </div>
                             <div className="modal-footer flex-center">

@@ -9,26 +9,26 @@ import Swal from 'sweetalert2'
 
 function Country_master() {
     const { list, country_status } = useSelector((state) => state.country_master_list)
-    const [formData,setFormData] = useState({
-        country_id:"",
-        country_name:"",
-        country_code:"",
-        country_flag:""
+    const [formData, setFormData] = useState({
+        country_id: "",
+        country_name: "",
+        country_code: "",
+        country_flag: ""
     })
 
     const handleKeyChange = (e) => {
 
         const { name, type, files, value } = e.target;
-         if (type === "file") {
+        if (type === "file") {
             if (name === "country_flag") {
 
-                setFormData((prev)=>({
+                setFormData((prev) => ({
                     ...prev,
                     [name]: files[0],
                 }));
             }
         } else {
-            setFormData((prev)=>({
+            setFormData((prev) => ({
                 ...prev,
                 [name]: value,
             }));
@@ -36,8 +36,21 @@ function Country_master() {
     }
 
     //Add country data
-    const submitCountry = async (e)=>{
-         e.preventDefault();
+    const submitCountry = async (e) => {
+        e.preventDefault();
+
+        const requiredFields = {
+            country_name: "Country Name",
+            country_code: "Country Code",
+            country_flag: "Country Flag"
+        };
+
+        for (const key in requiredFields) {
+            if (!formData[key]) {
+                toast.error(`${requiredFields[key]} is required`);
+                return;
+            }
+        }
 
         const body = new FormData();
         body.append("country_name", formData.country_name);
@@ -51,7 +64,7 @@ function Country_master() {
             const token = localStorage.getItem("admin_access_token");
 
             const storeCountry = await axios.post(
-                "https://keepinbasket.ortdemo.com/api/createCountry",
+                `${import.meta.env.VITE_API_URL}/api/createCountry`,
                 body,
                 {
                     headers: {
@@ -66,12 +79,13 @@ function Country_master() {
                 toast.success(storeCountry.data.message);
                 dispatch(getcountrylist());
                 setFormData({
-                    country_id:"",
-                    country_name:"",
-                    country_code:"",
-                    country_flag:""
+                    country_id: "",
+                    country_name: "",
+                    country_code: "",
+                    country_flag: ""
                 })
             } else {
+                console.log("storeCountry>", storeCountry)
                 toast.error(storeCountry.data.message);
             }
         } catch (error) {
@@ -81,29 +95,30 @@ function Country_master() {
     }
 
     //update status
-    const updateVisibility = async (e,row) => {
+    const updateVisibility = async (e, row) => {
 
         const body = {
-            country_id : row.id,
-            status : (e.target.checked) ? 1 : 0
+            country_id: row.id,
+            status: (e.target.checked) ? 1 : 0
         }
 
-        try{
+        try {
             const token = localStorage.getItem("admin_access_token")
-            const changeStatus = await axios.post("https://keepinbasket.ortdemo.com/api/updateCountryStatusById",body,{
-                headers:{
-                    Accept:"application/json",
-                    Authorization:`Bearer ${token}`
+            const changeStatus = await axios.post(`${import.meta.env.VITE_API_URL}/api/updateCountryStatusById`, body, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`
                 }
             });
 
-            if(changeStatus.data.status){
+            if (changeStatus.data.status) {
                 toast.success(changeStatus.data.message);
-            }else{
+                dispatch(getcountrylist())
+            } else {
                 toast.error(changeStatus.data.message)
             }
-        }catch(e){
-            console.log("error>",e.message)
+        } catch (e) {
+            console.log("error>", e.message)
         }
 
     }
@@ -111,7 +126,7 @@ function Country_master() {
     //delete country
     const deleteCountry = async (row) => {
         const body = {
-            country_id:row.id
+            country_id: row.id
         }
 
         const result = await Swal.fire({
@@ -126,22 +141,23 @@ function Country_master() {
 
         if (!result.isConfirmed) return;
 
-        try{
+        try {
             const token = localStorage.getItem('admin_access_token')
-            const delete_country = await axios.post("https://keepinbasket.ortdemo.com/api/deleteCountryById",body,{
-                headers:{
-                    Accept:"application/json",
-                    Authorization:`Bearer ${token}`
+            const delete_country = await axios.post(`${import.meta.env.VITE_API_URL}/api/deleteCountryById`, body, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`
                 }
             })
 
-            if(delete_country.data.status){
+            if (delete_country.data.status) {
                 toast.success(delete_country.data.message)
-            }else{
+                dispatch(getcountrylist())
+            } else {
                 toast.error(delete_country.data.message)
             }
-        }catch(e){
-            console.log("erroe",e)
+        } catch (e) {
+            console.log("erroe", e)
         }
     }
 
@@ -158,27 +174,26 @@ function Country_master() {
     const [search, setSearch] = useState("");
     const [filteredData, setFilteredData] = useState([]);
 
-      // cls
-      // filter countries when search changes
+    // cls
+    // filter countries when search changes
     useEffect(() => {
         const result = getcountryInfo.filter((item) =>
-                item.country_name.toLowerCase().includes(search.toLowerCase())
+            item.country_name.toLowerCase().includes(search.toLowerCase())
         );
         setFilteredData(result);
     }, [search, getcountryInfo])
 
     //fetch country (fetchCountry)
     const fetchCountry = (row) => {
-        console.log("row",row)
         setFormData({
-            country_id:row.id,
-            country_name:row.country_name,
-            country_code:row.code,
-            country_flag:row.country_flag
+            country_id: row.id,
+            country_name: row.country_name,
+            country_code: row.code,
+            country_flag: row.country_flag
         })
     }
 
-    const UpdateCountry = async(e) => {
+    const UpdateCountry = async (e) => {
         e.preventDefault()
 
         const body = new FormData();
@@ -196,7 +211,7 @@ function Country_master() {
             const token = localStorage.getItem("admin_access_token");
 
             const updateCountry = await axios.post(
-                "https://keepinbasket.ortdemo.com/api/updateCountryById",
+                `${import.meta.env.VITE_API_URL}/api/updateCountryById`,
                 body,
                 {
                     headers: {
@@ -211,10 +226,10 @@ function Country_master() {
                 toast.success(updateCountry.data.message);
                 dispatch(getcountrylist());
                 setFormData({
-                    country_id:"",
-                    country_name:"",
-                    country_code:"",
-                    country_flag:""
+                    country_id: "",
+                    country_name: "",
+                    country_code: "",
+                    country_flag: ""
                 })
             } else {
                 toast.error(updateCountry.data.message);
@@ -232,7 +247,7 @@ function Country_master() {
         {
             name: "Visiblity", cell: row => (
                 <>
-                    <input type="checkbox" className="form-check-input " checked={row.status===1} onChange={(e)=>updateVisibility(e,row)}/>
+                    <input type="checkbox" className="form-check-input " checked={row.status === 1} onChange={(e) => updateVisibility(e, row)} />
                 </>
             )
         },
@@ -240,11 +255,11 @@ function Country_master() {
             name: "Action",
             cell: row => (
                 <>
-                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e)=>fetchCountry(row)}>
+                    <button title="Edit" className="btn btn-sm btn-outline-secondary me-2" onClick={(e) => fetchCountry(row)}>
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button title="Delete" className="btn btn-sm btn-outline-secondary" onClick={(e)=>deleteCountry(row)}>
-                        <i className="fa-solid fa-arrows-rotate"></i>
+                    <button title="Delete" className="btn btn-sm btn-outline-secondary" onClick={(e) => deleteCountry(row)}>
+                        <i className="fa-solid fa-trash"></i>
                     </button>
                 </>
             )
@@ -277,24 +292,24 @@ function Country_master() {
                             <form id="filterForm" className="form fv-plugins-bootstrap5 fv-plugins-framework" onSubmit={formData.country_id ? UpdateCountry : submitCountry}>
                                 <div className="row">
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
-                                        <input type="hidden" className="form-control" name="id" id="id" value={formData.country_id || ''}/>
+                                        <input type="hidden" className="form-control" name="id" id="id" value={formData.country_id || ''} />
                                         <label className="fw-semibold mb-2">Country Name</label>
-                                        <input type="text" className="form-control" name="country_name" id="country_name" value={formData.country_name || ''} onChange={(e)=>handleKeyChange(e)}/>
+                                        <input type="text" className="form-control" name="country_name" id="country_name" value={formData.country_name || ''} onChange={(e) => handleKeyChange(e)} />
                                     </div>
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                                         <label className="fw-semibold mb-2">Country Code</label>
-                                        <input type="text" className="form-control" name="country_code" id="country_code"  value={formData.country_code || ''} onChange={(e)=>handleKeyChange(e)}/>
+                                        <input type="text" className="form-control" name="country_code" id="country_code" value={formData.country_code || ''} onChange={(e) => handleKeyChange(e)} />
                                     </div>
                                     <div className="col-md-4 mb-3 fv-row fv-plugins-icon-container">
                                         <label className="fw-semibold mb-2">Country Flag</label>
-                                        <input type="file" className="form-control" name="country_flag" id="country_flag"  onChange={(e)=>handleKeyChange(e)}/>
+                                        <input type="file" className="form-control" name="country_flag" id="country_flag" onChange={(e) => handleKeyChange(e)} />
                                         {formData.country_flag && typeof formData.country_flag === "string" && (
                                             <img
                                                 src={formData.country_flag}
                                                 alt="Country Flag"
                                                 style={{ width: "30px", marginTop: "3px" }}
                                             />
-                                            )}
+                                        )}
 
                                     </div>
                                 </div>
