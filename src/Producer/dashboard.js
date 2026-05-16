@@ -8,7 +8,7 @@ export const dashboardlist = createAsyncThunk('dashboard/getdashboard', async ()
     const dashboardInfo = await axios.post(`${import.meta.env.VITE_API_URL}/api/dashboard`, {}, {
         headers: {
             Accept: 'application/json',
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${toke}`
         }
     })
 
